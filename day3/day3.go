@@ -10,28 +10,6 @@ import (
 	"strings"
 )
 
-func searchNext(input, token string, position int) (int, error) {
-	for i := position; i < len(input); i++ {
-		if input[i] == token[0] {
-			tokenFound := true
-			for j := 1; j < len(token); j++ {
-				if i+j < len(input) {
-					if input[i+j] != token[j] {
-						tokenFound = false
-						break
-					}
-				}
-			}
-
-			if tokenFound {
-				return i + len(token), nil
-			}
-		}
-	}
-
-	return 0, errors.New(fmt.Sprintf("Could not find token %s after position %d", token, position))
-}
-
 func Part1() int {
 	lines := utils.ReadInput("day3")
 	input := strings.Join(lines, "")
