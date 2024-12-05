@@ -3,15 +3,14 @@ package day5
 import (
 	"awesomeProject/utils"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
 )
 
 type Rule struct {
-	containsBefore int64
-	number         int64
+	containsBefore string
+	number         string
 }
 
 func Part1() int {
@@ -59,11 +58,11 @@ func Part2() int {
 
 func getMiddleOfUpdate(update string, rules []Rule) (int64, error) {
 	for _, rule := range rules {
-		location := strings.Index(update, strconv.FormatInt(rule.number, 10))
+		location := strings.Index(update, rule.number)
 		if location != -1 {
-			locationPrevious := strings.Index(update, strconv.FormatInt(rule.containsBefore, 10))
+			locationPrevious := strings.Index(update, rule.containsBefore)
 			if locationPrevious > location {
-				return 0, errors.New("Not a valid update")
+				return 0, errors.New("not a valid update")
 			}
 		}
 	}
@@ -90,18 +89,9 @@ func parsePuzzleInput(lines []string) ([]string, []Rule) {
 
 		if !endOfRules {
 			parts := strings.Split(line, "|")
-			containsBefore, err := strconv.ParseInt(parts[0], 10, 0)
-			if err != nil {
-				log.Fatal(err)
-			}
-			number, err := strconv.ParseInt(parts[1], 10, 0)
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			rule := Rule{
-				containsBefore: containsBefore,
-				number:         number,
+				containsBefore: parts[0],
+				number:         parts[1],
 			}
 			rules = append(rules, rule)
 		} else {
@@ -116,7 +106,6 @@ func reorderIncorrectUpdates(updates []string, rules []Rule) []string {
 	var newUpdates []string
 	for _, update := range updates {
 		reordered := reorderUpdate(update, rules)
-		fmt.Printf("Update %s has become %s\n", update, reordered)
 		newUpdates = append(newUpdates, reordered)
 	}
 	return newUpdates
@@ -124,25 +113,20 @@ func reorderIncorrectUpdates(updates []string, rules []Rule) []string {
 
 func reorderUpdate(update string, rules []Rule) string {
 	for _, rule := range rules {
-		location := strings.Index(update, strconv.FormatInt(rule.number, 10))
+		location := strings.Index(update, rule.number)
 		if location != -1 {
-			locationPrevious := strings.Index(update, strconv.FormatInt(rule.containsBefore, 10))
+			locationPrevious := strings.Index(update, rule.containsBefore)
 			if locationPrevious > location {
 				parts := strings.Split(update, ",")
 				var newUpdateParts []string
 				for i := 0; i < len(parts); i++ {
-					partNum, err := strconv.ParseInt(parts[i], 10, 0)
-					if err != nil {
-						log.Fatal(err)
-					}
 
-					if partNum == rule.containsBefore {
+					if parts[i] == rule.containsBefore {
 						continue
 					}
 
-					if partNum == rule.number {
-						before := strconv.FormatInt(rule.containsBefore, 10)
-						newUpdateParts = append(newUpdateParts, before, parts[i])
+					if parts[i] == rule.number {
+						newUpdateParts = append(newUpdateParts, rule.containsBefore, parts[i])
 						continue
 					}
 
