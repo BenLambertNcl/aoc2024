@@ -1,7 +1,7 @@
 package main
 
 import (
-	"awesomeProject/day4"
+	"awesomeProject/day5"
 	"fmt"
 )
 
@@ -15,6 +15,9 @@ func main() {
 	//fmt.Println("Part 1: ", day3.Part1())
 	//fmt.Println("Part 2: ", day3.Part2())
 
-	fmt.Println("Part 1: ", day4.Part1())
-	fmt.Println("Part 2: ", day4.Part2())
+	//fmt.Println("Part 1: ", day4.Part1())
+	//fmt.Println("Part 2: ", day4.Part2())
+
+	fmt.Println("Part 1: ", day5.Part1())
+	fmt.Println("Part 2: ", day5.Part2())
 }
