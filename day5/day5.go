@@ -16,40 +16,37 @@ type Rule struct {
 
 func Part1() int {
 	lines := utils.ReadInput("day5")
-	var rules []Rule
-	var updates []string
-
-	endOfRules := false
-
-	for _, line := range lines {
-		if line == "" {
-			endOfRules = true
-			continue
-		}
-
-		if !endOfRules {
-			parts := strings.Split(line, "|")
-			containsBefore, err := strconv.ParseInt(parts[0], 10, 0)
-			if err != nil {
-				log.Fatal(err)
-			}
-			number, err := strconv.ParseInt(parts[1], 10, 0)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			rule := Rule{
-				containsBefore: containsBefore,
-				number:         number,
-			}
-			rules = append(rules, rule)
-		} else {
-			updates = append(updates, line)
-		}
-	}
+	updates, rules := parsePuzzleInput(lines)
 
 	var total int64 = 0
 	for _, update := range updates {
+		middle, err := getMiddleOfUpdate(update, rules)
+		if err != nil {
+			continue
+		}
+		total += middle
+	}
+
+	return int(total)
+}
+
+func Part2() int {
+	lines := utils.ReadInput("day5")
+	updates, rules := parsePuzzleInput(lines)
+
+	var incorrectUpdates []string
+	for _, update := range updates {
+		_, err := getMiddleOfUpdate(update, rules)
+		if err != nil {
+			incorrectUpdates = append(incorrectUpdates, update)
+			continue
+		}
+	}
+
+	reordered := reorderIncorrectUpdates(incorrectUpdates, rules)
+
+	var total int64 = 0
+	for _, update := range reordered {
 		middle, err := getMiddleOfUpdate(update, rules)
 		if err != nil {
 			continue
@@ -79,9 +76,7 @@ func getMiddleOfUpdate(update string, rules []Rule) (int64, error) {
 	return middle, nil
 }
 
-func Part2() int {
-	lines := utils.ReadInput("day5")
-
+func parsePuzzleInput(lines []string) ([]string, []Rule) {
 	var rules []Rule
 	var updates []string
 
@@ -114,28 +109,7 @@ func Part2() int {
 		}
 	}
 
-	var incorrectUpdates []string
-	for _, update := range updates {
-		_, err := getMiddleOfUpdate(update, rules)
-		if err != nil {
-			incorrectUpdates = append(incorrectUpdates, update)
-			continue
-		}
-	}
-
-	// Reorder
-	reordered := reorderIncorrectUpdates(incorrectUpdates, rules)
-
-	var total int64 = 0
-	for _, update := range reordered {
-		middle, err := getMiddleOfUpdate(update, rules)
-		if err != nil {
-			continue
-		}
-		total += middle
-	}
-
-	return int(total)
+	return updates, rules
 }
 
 func reorderIncorrectUpdates(updates []string, rules []Rule) []string {
