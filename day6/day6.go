@@ -35,7 +35,7 @@ func Part1() int {
 		}
 	}
 
-	stepCount, _ := walkGrid(guardX, guardY, grid)
+	stepCount, _ := walkGrid(guardX, guardY, &grid)
 
 	return stepCount
 }
@@ -69,7 +69,7 @@ func Part2() int {
 			gridCopy := copyGrid(grid)
 			gridCopy[i][j] = '#'
 
-			_, err := walkGrid(guardX, guardY, gridCopy)
+			_, err := walkGrid(guardX, guardY, &gridCopy)
 			if err != nil {
 				fmt.Println(err)
 				loopCounter++
@@ -86,7 +86,7 @@ type Step struct {
 	direction Direction
 }
 
-func walkGrid(startX, startY int, grid [][]rune) (int, error) {
+func walkGrid(startX, startY int, grid *[][]rune) (int, error) {
 	guardX := startX
 	guardY := startY
 
@@ -106,11 +106,11 @@ func walkGrid(startX, startY int, grid [][]rune) (int, error) {
 
 		newX, newY := moveGuard(guardX, guardY, direction)
 
-		if isOutOfBounds(grid, newX, newY) {
+		if isOutOfBounds(*grid, newX, newY) {
 			break
 		}
 
-		gridChar := grid[newY][newX]
+		gridChar := (*grid)[newY][newX]
 
 		if gridChar == '#' {
 			direction = changeDirection(direction)
@@ -120,7 +120,7 @@ func walkGrid(startX, startY int, grid [][]rune) (int, error) {
 
 		if gridChar != 'X' && gridChar != '^' {
 			stepCount++
-			grid[newY][newX] = 'X'
+			(*grid)[newY][newX] = 'X'
 		}
 
 		guardX = newX
