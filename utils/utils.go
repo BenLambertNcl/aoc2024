@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 )
@@ -18,4 +19,13 @@ func ReadInput(dayFolder string) []string {
 		lines = append(lines, scanner.Text())
 	}
 	return lines
+}
+
+func PrintGrid(grid [][]string) {
+	for _, row := range grid {
+		for _, cell := range row {
+			fmt.Printf("%s", cell)
+		}
+		fmt.Println()
+	}
 }
